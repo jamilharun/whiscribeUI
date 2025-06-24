@@ -1,0 +1,15 @@
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
+import { BrowserRouter } from "react-router-dom";
+import { BrowserCompatibilityProvider } from "./context/browserCompat.tsx";
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <BrowserRouter>
+      <BrowserCompatibilityProvider>
+        <App />
+      </BrowserCompatibilityProvider>
+    </BrowserRouter>
+  </StrictMode>
+);
