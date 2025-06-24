@@ -1,6 +1,6 @@
 import { FiFolder, FiMoon, FiSun, FiX } from "react-icons/fi";
 import { useBrowserCompatibility } from "../../context/browserCompat";
-import { useDarkMode } from "../../hooks/useDarkMode";
+import { useDarkMode } from "../../context/DarkModeContext";
 
 type MenuDrawerMobileProp = {
   toggleMobileMenu: () => void;
@@ -20,7 +20,7 @@ export const MenuDrawerMobile = ({
     isLoading,
   } = useBrowserCompatibility();
 
-  const [darkMode, setDarkMode] = useDarkMode();
+  const { darkMode, toggleDarkMode } = useDarkMode();
 
   return (
     mobileMenuOpen && (
@@ -68,7 +68,7 @@ export const MenuDrawerMobile = ({
 
           <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button
-              onClick={setDarkMode(!darkMode)}
+              onClick={toggleDarkMode}
               className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               {darkMode ? <FiSun /> : <FiMoon />}

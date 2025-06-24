@@ -1,7 +1,7 @@
 import { FiMenu, FiMoon, FiSun, FiX } from "react-icons/fi";
-import { useDarkMode } from "../../hooks/useDarkMode";
 import { useBrowserCompatibility } from "../../context/browserCompat";
 import type { RefObject } from "react";
+import { useDarkMode } from "../../context/DarkModeContext";
 
 type HeaderMobileProp = {
   toggleMobileMenu: () => void;
@@ -19,7 +19,7 @@ export const HeaderMobile = ({
   const { supportsFileSystemAPI, supportsWebkitDirectory } =
     useBrowserCompatibility();
 
-  const [darkMode, setDarkMode] = useDarkMode();
+  const { darkMode, toggleDarkMode } = useDarkMode();
   return (
     <header className="lg:hidden sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center">
       <button
@@ -41,7 +41,7 @@ export const HeaderMobile = ({
           : {})}
       />
       <button
-        onClick={() => setDarkMode(!darkMode)}
+        onClick={toggleDarkMode}
         className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
       >
         {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}

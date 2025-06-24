@@ -1,7 +1,7 @@
 import { FiFolder, FiMoon, FiMusic, FiSun } from "react-icons/fi";
-import { useDarkMode } from "../../hooks/useDarkMode";
 import { useBrowserCompatibility } from "../../context/browserCompat";
 import type { Mp3Mp4File } from "../../types/player-types";
+import { useDarkMode } from "../../context/DarkModeContext";
 
 type SidebarDesktopProp = {
   pickFolder: () => Promise<void>;
@@ -21,7 +21,7 @@ export const SidebarDesktop = ({
     setScanSubfolders,
     isLoading,
   } = useBrowserCompatibility();
-  const [darkMode, setDarkMode] = useDarkMode();
+  const { darkMode, toggleDarkMode } = useDarkMode();
 
   const mp3Files: Mp3Mp4File[] = files.filter((file) =>
     file.name.toLowerCase().endsWith(".mp3")
@@ -32,7 +32,7 @@ export const SidebarDesktop = ({
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold">MP3 Player</h1>
         <button
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={toggleDarkMode}
           className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
         >
           {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}

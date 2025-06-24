@@ -1,25 +1,19 @@
-import type { Mp3Mp4File, Subtitle } from "../../types/player-types";
+import type { Mp3Mp4File } from "../../types/player-types";
 import { SidebarDesktop } from "./SidebarDesktop";
-import { MainContentDesktop } from "./MainContentDesktop";
+import type { ReactNode } from "react";
 
 type LayoutDesktopProp = {
   pickFolder: () => Promise<void>;
   playFile: (mp3File: Mp3Mp4File) => Promise<void>;
   currentFile: string | null;
-  audioUrl: string | null;
-  subtitleUrl: string | null;
-  currentSubtitle: string;
-  subtitles: Subtitle[];
+  children: ReactNode;
 };
 
 export const LayoutDesktop = ({
   pickFolder,
   playFile,
   currentFile,
-  audioUrl,
-  subtitleUrl,
-  currentSubtitle,
-  subtitles,
+  children,
 }: LayoutDesktopProp) => {
   return (
     <div className="hidden lg:flex min-h-screen">
@@ -31,13 +25,7 @@ export const LayoutDesktop = ({
       />
 
       {/* Main Content */}
-      <MainContentDesktop
-        currentFile={currentFile}
-        audioUrl={audioUrl}
-        subtitleUrl={subtitleUrl}
-        currentSubtitle={currentSubtitle}
-        subtitles={subtitles}
-      />
+      {children}
     </div>
   );
 };

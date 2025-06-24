@@ -10,7 +10,7 @@ type MainContentDesktopProp = {
   subtitles: Subtitle[];
 };
 
-export const MainContentDesktop = ({
+export const MainContentMp3Desktop = ({
   currentFile,
   audioUrl,
   subtitleUrl,

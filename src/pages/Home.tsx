@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { FiSun, FiMoon, FiHeadphones, FiFilm } from "react-icons/fi";
 import { Button } from "../compoents/whiscribeButton";
-import { useDarkMode } from "../hooks/useDarkMode";
 import { ButtonEnum } from "../types/button";
+import { useDarkMode } from "../context/DarkModeContext";
 
 const Home = () => {
   const navigate = useNavigate();
 
-  const [darkMode, setDarkMode] = useDarkMode();
+  const { darkMode, toggleDarkMode } = useDarkMode();
 
   return (
     <div
@@ -16,7 +16,7 @@ const Home = () => {
     >
       {/* Theme Toggle */}
       <Button
-        onPress={() => setDarkMode(!darkMode)}
+        onPress={toggleDarkMode}
         type={ButtonEnum.CUSTOM}
         style="absolute top-4 right-4 p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300
         dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"

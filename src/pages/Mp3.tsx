@@ -2,12 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { useBrowserCompatibility } from "../context/browserCompat";
 import type { Mp3Mp4File, Subtitle } from "../types/player-types";
 import { convertSRTtoWebVTT, parseSRT } from "../utils/global-utils";
-import { useDarkMode } from "../hooks/useDarkMode";
 import { FiMusic, FiX } from "react-icons/fi";
 import { HeaderMobile } from "../compoents/Mobile/HeaderMobile";
 import { MenuDrawerMobile } from "../compoents/Mobile/MenuDrawerMobile";
 import { LayoutDesktop } from "../compoents/Desktop/LayoutDesktop";
 import { FilesDrawerMobile } from "../compoents/Mobile/FilesDrawerMobile";
+import { MainContentMp3Desktop } from "../compoents/Desktop/MainContentMp3Desktop";
+import { useDarkMode } from "../context/DarkModeContext";
 
 function Mp3() {
   const {
@@ -22,7 +23,7 @@ function Mp3() {
     handleFileInput,
     isLoading,
   } = useBrowserCompatibility();
-  const [darkMode, setDarkMode] = useDarkMode();
+  const { darkMode, toggleDarkMode } = useDarkMode();
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [subtitleUrl, setSubtitleUrl] = useState<string | null>(null);
@@ -168,7 +169,6 @@ function Mp3() {
     }
   };
 
-  const toggleDarkMode = () => setDarkMode(!darkMode);
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
   const toggleFilesDrawer = () => setFilesDrawerOpen(!filesDrawerOpen);
 
@@ -229,11 +229,15 @@ function Mp3() {
         pickFolder={pickFolder}
         playFile={playFile}
         currentFile={currentFile}
-        audioUrl={audioUrl}
-        subtitleUrl={subtitleUrl}
-        currentSubtitle={currentSubtitle}
-        subtitles={subtitles}
-      />
+      >
+        <MainContentMp3Desktop
+          currentFile={currentFile}
+          audioUrl={audioUrl}
+          subtitleUrl={subtitleUrl}
+          currentSubtitle={currentSubtitle}
+          subtitles={subtitles}
+        />
+      </LayoutDesktop>
 
       {/* Mobile Files Drawer */}
       <FilesDrawerMobile toggleFilesDrawer={toggleFilesDrawer} />
