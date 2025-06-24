@@ -1,27 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { FiSun, FiMoon, FiHeadphones, FiFilm } from "react-icons/fi";
 import { Button } from "../compoents/whiscribeButton";
+import { useDarkMode } from "../hooks/useDarkMode";
+import { ButtonEnum } from "../types/button";
 
 const Home = () => {
   const navigate = useNavigate();
 
-  const [darkMode, setDarkMode] = useState(() => {
-    // Check for user's preferred color scheme
-    return (
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    );
-  });
-
-  // Apply dark mode class to document
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
+  const [darkMode, setDarkMode] = useDarkMode();
 
   return (
     <div
@@ -31,6 +17,7 @@ const Home = () => {
       {/* Theme Toggle */}
       <Button
         onPress={() => setDarkMode(!darkMode)}
+        type={ButtonEnum.CUSTOM}
         style="absolute top-4 right-4 p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300
         dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
         aria_label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
@@ -53,14 +40,16 @@ const Home = () => {
         </p>
       </div>
 
-      <div className="w-full max-w-2xl space-y-4 sm:space-y-6 md:space-y-8">
+      <div className="w-full flex justify-center items-center flex-col space-y-4 sm:space-y-6 md:space-y-8">
         <Button
           text="Audio Transcription"
+          type={ButtonEnum.MAIN}
           onPress={() => navigate("/mp3")}
           icon={<FiHeadphones className="inline-block" />}
         />
         <Button
           text="Video Transcription"
+          type={ButtonEnum.MAIN}
           onPress={() => navigate("/mp4")}
           icon={<FiFilm className="inline-block" />}
         />

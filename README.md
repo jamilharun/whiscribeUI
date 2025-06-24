@@ -73,7 +73,7 @@ Since browsers handle audio processing efficiently, Whiscribe ensures **clear, u
 
 1. Clone the repo:
    ```sh
-   git clone https://github.com/your-repo/whiscribe.git
+   git clone https://github.com/jamilharun/whiscribeUI.git
    ```
 2. Install dependencies:
    ```sh

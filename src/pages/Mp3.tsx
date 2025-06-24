@@ -2,23 +2,27 @@ import { useEffect, useState, useRef } from "react";
 import { useBrowserCompatibility } from "../context/browserCompat";
 import type { Mp3Mp4File, Subtitle } from "../types/player-types";
 import { convertSRTtoWebVTT, parseSRT } from "../utils/global-utils";
+import { useDarkMode } from "../hooks/useDarkMode";
+import { FiMusic, FiX } from "react-icons/fi";
+import { HeaderMobile } from "../compoents/Mobile/HeaderMobile";
+import { MenuDrawerMobile } from "../compoents/Mobile/MenuDrawerMobile";
+import { LayoutDesktop } from "../compoents/Desktop/LayoutDesktop";
+import { FilesDrawerMobile } from "../compoents/Mobile/FilesDrawerMobile";
 
 function Mp3() {
   const {
     supportsFileSystemAPI,
-    supportsWebkitDirectory,
-    browserName,
-    isModernBrowser,
+    // browserName,
+    // isModernBrowser,
     files,
     dirHandle,
     fileType,
     setFileType,
     pickFolderModern,
     handleFileInput,
-    scanSubfolders,
-    setScanSubfolders,
     isLoading,
   } = useBrowserCompatibility();
+  const [darkMode, setDarkMode] = useDarkMode();
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [subtitleUrl, setSubtitleUrl] = useState<string | null>(null);
@@ -26,6 +30,9 @@ function Mp3() {
   const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState<string>("");
   const [allFiles, setAllFiles] = useState<File[]>([]);
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [filesDrawerOpen, setFilesDrawerOpen] = useState(true);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -161,6 +168,10 @@ function Mp3() {
     }
   };
 
+  const toggleDarkMode = () => setDarkMode(!darkMode);
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+  const toggleFilesDrawer = () => setFilesDrawerOpen(!filesDrawerOpen);
+
   useEffect(() => {
     console.log("Parsed subtitles:", subtitles);
     if (!audioUrl || subtitles.length === 0) return;
@@ -193,155 +204,87 @@ function Mp3() {
   }, [audioUrl, subtitleUrl]);
 
   return (
-    <div className="p-5 font-sans max-w-6xl mx-auto">
-      <header className="mb-5 border-b border-gray-300 pb-4">
-        <h1 className="m-0 text-gray-800 text-2xl font-bold">
-          MP3 Audio Player
-        </h1>
-        <div className="flex items-center gap-3 mt-2 flex-wrap">
-          <button
-            onClick={pickFolder}
-            disabled={isLoading}
-            className="px-4 py-2 bg-blue-600 text-white border-none rounded cursor-pointer hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-          >
-            {isLoading
-              ? "Loading..."
-              : supportsFileSystemAPI
-              ? "Pick Folder"
-              : "Select Files"}
-          </button>
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        darkMode ? "dark bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+      }`}
+    >
+      {/* Mobile Header */}
+      <HeaderMobile
+        toggleMobileMenu={toggleMobileMenu}
+        mobileMenuOpen={mobileMenuOpen}
+        fileInputRef={fileInputRef}
+        handleFileInputWrapper={handleFileInputWrapper}
+      />
 
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={scanSubfolders}
-              onChange={(e) => setScanSubfolders(e.target.checked)}
-              className="cursor-pointer"
-            />
-            <span>Include subfolders</span>
-          </label>
+      {/* Mobile Menu Drawer */}
+      <MenuDrawerMobile
+        toggleMobileMenu={toggleDarkMode}
+        pickFolder={pickFolder}
+        mobileMenuOpen={mobileMenuOpen}
+      />
 
-          <div className="flex items-center gap-2 text-sm">
-            {isModernBrowser ? (
-              <span className="text-green-600 bg-green-50 px-2 py-1 rounded">
-                ✓{" "}
-                {browserName === "chrome" || browserName === "edge"
-                  ? "Full folder support"
-                  : "File selection supported"}
-              </span>
-            ) : (
-              <span className="text-orange-600 bg-orange-50 px-2 py-1 rounded">
-                ⚠ Limited file support - please select all MP3 and SRT files
-              </span>
-            )}
+      {/* Desktop Layout */}
+      <LayoutDesktop
+        pickFolder={pickFolder}
+        playFile={playFile}
+        currentFile={currentFile}
+        audioUrl={audioUrl}
+        subtitleUrl={subtitleUrl}
+        currentSubtitle={currentSubtitle}
+        subtitles={subtitles}
+      />
+
+      {/* Mobile Files Drawer */}
+      <FilesDrawerMobile toggleFilesDrawer={toggleFilesDrawer} />
+
+      {filesDrawerOpen && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 shadow-lg rounded-t-xl p-4 max-h-[50vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold">MP3 Files</h2>
+            <button onClick={toggleFilesDrawer} className="p-1">
+              <FiX size={20} />
+            </button>
           </div>
-        </div>
 
-        {/* Hidden file input for fallback */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept=".mp3,.srt"
-          onChange={handleFileInputWrapper}
-          style={{ display: "none" }}
-          {...(supportsWebkitDirectory && !supportsFileSystemAPI
-            ? { webkitdirectory: "true" }
-            : {})}
-        />
-      </header>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(250px,1fr)_minmax(0,2fr)] gap-5 mt-5">
-        {/* Left panel - Files List */}
-        <div className="bg-gray-100 rounded-lg p-4 max-h-[70vh] overflow-y-auto">
-          <h2 className="mt-0 text-lg font-semibold text-gray-800">
-            MP3 Files {mp3Files.length > 0 && `(${mp3Files.length})`}
-          </h2>
           {isLoading ? (
-            <div className="text-center py-4 text-gray-500">
-              <div className="animate-spin inline-block w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full mr-2"></div>
-              Loading files...
+            <div className="flex items-center justify-center h-20 text-gray-500">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
             </div>
           ) : mp3Files.length > 0 ? (
-            <ul className="list-none p-0 m-0">
+            <ul className="space-y-2">
               {mp3Files.map((file, index) => (
-                <li key={index} className="mb-2">
+                <li key={index}>
                   <button
-                    onClick={() => playFile(file)}
-                    className={`w-full text-left p-2.5 border border-gray-300 rounded cursor-pointer flex items-start transition-colors ${
+                    onClick={() => {
+                      playFile(file);
+                      setFilesDrawerOpen(false);
+                    }}
+                    className={`w-full text-left p-3 rounded-lg flex items-start transition-colors ${
                       file.name === currentFile
-                        ? "bg-blue-100 border-blue-300"
-                        : "bg-white hover:bg-gray-50"
+                        ? "bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
+                        : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
                   >
-                    <span className="mr-2 text-lg flex-shrink-0 mt-0.5">
-                      {file.name === currentFile ? "▶️" : "🎵"}
+                    <span className="mr-2 flex-shrink-0 mt-0.5">
+                      <FiMusic />
                     </span>
                     <div className="flex-1 min-w-0">
                       <span className="block overflow-hidden text-ellipsis whitespace-nowrap font-medium">
                         {file.name}
                       </span>
-                      {file.path && file.path !== file.name && (
-                        <span className="block text-xs text-gray-500 mt-1 overflow-hidden text-ellipsis whitespace-nowrap">
-                          {file.path}
-                        </span>
-                      )}
                     </div>
                   </button>
                 </li>
               ))}
             </ul>
           ) : (
-            <div className="text-gray-500 italic">
-              No MP3 files found. Please select a folder containing MP3 files.
+            <div className="text-gray-500 dark:text-gray-400 italic">
+              No MP3 files found
             </div>
           )}
         </div>
-
-        {/* Right panel - Player & Subtitles */}
-        <div className="flex flex-col gap-4">
-          {audioUrl ? (
-            <>
-              <div className="bg-gray-100 rounded-lg p-5">
-                <h2 className="m-0 mb-4 text-lg font-semibold text-gray-800">
-                  Now Playing: {currentFile}
-                </h2>
-                <audio controls className="w-full mb-2" preload="metadata">
-                  <source src={audioUrl} type="audio/mpeg" />
-                  {subtitleUrl && (
-                    <track
-                      kind="subtitles"
-                      src={subtitleUrl}
-                      default
-                      label="English"
-                      srcLang="en"
-                    />
-                  )}
-                </audio>
-              </div>
-
-              {/* Subtitle Display */}
-              <div className="min-h-[100px] flex items-center justify-center">
-                {currentSubtitle ? (
-                  <div className="w-full p-4 text-black rounded-lg text-5xl italic text-center leading-tight">
-                    {currentSubtitle}
-                  </div>
-                ) : subtitles.length === 0 && currentFile ? (
-                  <div className="p-2.5 text-orange-600 bg-orange-50 rounded-lg w-full text-center">
-                    No subtitles available for this audio file
-                  </div>
-                ) : null}
-              </div>
-            </>
-          ) : (
-            <div className="h-48 flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">
-              {mp3Files.length > 0
-                ? "Select an MP3 file to play"
-                : "Select a folder to load MP3 files"}
-            </div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
