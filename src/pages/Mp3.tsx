@@ -9,6 +9,7 @@ import { LayoutDesktop } from "../compoents/Desktop/LayoutDesktop";
 import { FilesDrawerMobile } from "../compoents/Mobile/FilesDrawerMobile";
 import { MainContentMp3Desktop } from "../compoents/Desktop/MainContentMp3Desktop";
 import { useDarkMode } from "../context/DarkModeContext";
+import { NotFound } from "../compoents/NotFound";
 
 function Mp3() {
   const {
@@ -23,7 +24,7 @@ function Mp3() {
     handleFileInput,
     isLoading,
   } = useBrowserCompatibility();
-  const { darkMode, toggleDarkMode } = useDarkMode();
+  const { darkMode } = useDarkMode();
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [subtitleUrl, setSubtitleUrl] = useState<string | null>(null);
@@ -219,7 +220,7 @@ function Mp3() {
 
       {/* Mobile Menu Drawer */}
       <MenuDrawerMobile
-        toggleMobileMenu={toggleDarkMode}
+        toggleMobileMenu={toggleMobileMenu}
         pickFolder={pickFolder}
         mobileMenuOpen={mobileMenuOpen}
       />
@@ -283,9 +284,7 @@ function Mp3() {
               ))}
             </ul>
           ) : (
-            <div className="text-gray-500 dark:text-gray-400 italic">
-              No MP3 files found
-            </div>
+            <NotFound />
           )}
         </div>
       )}

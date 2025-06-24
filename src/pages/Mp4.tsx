@@ -9,6 +9,7 @@ import { LayoutDesktop } from "../compoents/Desktop/LayoutDesktop";
 import { MainContentMp4Desktop } from "../compoents/Desktop/MainContentMp4Desktop";
 import { FilesDrawerMobile } from "../compoents/Mobile/FilesDrawerMobile";
 import { useDarkMode } from "../context/DarkModeContext";
+import { NotFound } from "../compoents/NotFound";
 
 // Extend the HTML input element to include webkitdirectory
 declare module "react" {
@@ -31,7 +32,7 @@ function Mp4() {
     handleFileInput,
     isLoading,
   } = useBrowserCompatibility();
-  const { darkMode, toggleDarkMode } = useDarkMode();
+  const { darkMode } = useDarkMode();
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [subtitleUrl, setSubtitleUrl] = useState<string | null>(null);
@@ -306,7 +307,7 @@ function Mp4() {
 
       {/* Mobile Menu Drawer */}
       <MenuDrawerMobile
-        toggleMobileMenu={toggleDarkMode}
+        toggleMobileMenu={toggleMobileMenu}
         pickFolder={pickFolder}
         mobileMenuOpen={mobileMenuOpen}
       />
@@ -382,9 +383,7 @@ function Mp4() {
               ))}
             </ul>
           ) : (
-            <div className="text-gray-500 dark:text-gray-400 italic">
-              No video files found
-            </div>
+            <NotFound />
           )}
         </div>
       )}

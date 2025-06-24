@@ -35,7 +35,12 @@ export const MainContentMp3Desktop = ({
                   {currentFile}
                 </span>
               </h2>
-              <audio controls className="w-full mb-4" preload="metadata">
+              <audio
+                controls
+                className="w-full mb-4"
+                preload="metadata"
+                crossOrigin="anonymous"
+              >
                 <source src={audioUrl} type="audio/mpeg" />
                 {subtitleUrl && (
                   <track

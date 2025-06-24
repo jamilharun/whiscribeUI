@@ -16,10 +16,10 @@ export const HeaderMobile = ({
   fileInputRef,
   handleFileInputWrapper,
 }: HeaderMobileProp) => {
-  const { supportsFileSystemAPI, supportsWebkitDirectory } =
+  const { supportsFileSystemAPI, supportsWebkitDirectory, fileType } =
     useBrowserCompatibility();
 
-  const { darkMode, toggleDarkMode } = useDarkMode();
+  const { darkMode } = useDarkMode();
   return (
     <header className="lg:hidden sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center">
       <button
@@ -28,7 +28,7 @@ export const HeaderMobile = ({
       >
         {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
       </button>
-      <h1 className="text-xl font-bold">MP3 Player</h1>
+      <h1 className="text-xl font-bold">{fileType} Player</h1>
       <input
         ref={fileInputRef}
         type="file"
@@ -41,8 +41,8 @@ export const HeaderMobile = ({
           : {})}
       />
       <button
-        onClick={toggleDarkMode}
-        className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+        // onClick={toggleDarkMode}
+        className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 opacity-0"
       >
         {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
       </button>
